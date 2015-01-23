@@ -37,6 +37,13 @@ def registration():
 def login():
 	form = LoginForm()
 	if form.validate_on_submit():
-		return redirect(url_for('index'))
+		q=db.session.query(User).filter_by(email = form.email.data,password = form.password.data).first()
+		if(q is None):
+			flash("Wrong Username or password")
+			return redirect(url_for('.login'))
+		else:
+			flash("Welcome %s"%(q.fname))
+			return redirect(url_for('.index'))
+		
 		
 	return render_template('login.html',form=form)

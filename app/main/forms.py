@@ -13,5 +13,5 @@ class RegistrationForm(Form):
 
 class LoginForm(Form):
 	email = StringField(u'Email Address',validators = [Required()])
-	password = StringField(u'Password',validators = [Required()])
+	password = PasswordField(u'Password',validators = [Required()])
 	login = SubmitField(u'Login')
