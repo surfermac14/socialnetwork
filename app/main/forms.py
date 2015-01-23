@@ -12,6 +12,6 @@ class RegistrationForm(Form):
 	submit = SubmitField(u'Register')
 
 class LoginForm(Form):
-	email = StringField(u'Email Address',validators = [Required()])
+	email = StringField(u'Email Address',validators = [Required(),Email()])
 	password = PasswordField(u'Password',validators = [Required()])
-	login = SubmitField(u'Login')
+	#login = SubmitField(u'Login')

@@ -1,4 +1,4 @@
-from flask import render_template,redirect,flash,url_for
+from flask import render_template,redirect,flash,url_for,request
 from . import main
 from .forms import RegistrationForm,LoginForm
 from .. import db
@@ -23,27 +23,17 @@ def registration():
 		user.email  = form.email.data
 		user.password = form.password.data
 		user.sex = form.sex.data
-		try:
+		
+		mail=db.session.query(User).filter_by(email=user.email).first()
+		
+		if mail is None:
 			db.session.add(user)
 			db.session.commit()
 			flash('Successfully registered. Please proceed to login page.')
 			return redirect(url_for('.index'))
-		except Exception as e:
+		else:
 			flash('Email id already exists')
-			db.session.rollback()
+			return redirect(url_for('.registration'))
 	return render_template('registration.html',form=form)
 
-@main.route('/login',methods=['GET','POST'])
-def login():
-	form = LoginForm()
-	if form.validate_on_submit():
-		q=db.session.query(User).filter_by(email = form.email.data,password = form.password.data).first()
-		if(q is None):
-			flash("Wrong Username or password")
-			return redirect(url_for('.login'))
-		else:
-			flash("Welcome %s"%(q.fname))
-			return redirect(url_for('.index'))
-		
-		
-	return render_template('login.html',form=form)
+
