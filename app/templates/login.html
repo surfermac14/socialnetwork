@@ -1,0 +1,18 @@
+{%  extends 'base.html' %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title%} Social Network - Login   {% endblock%}
+
+{% block content%}
+
+<form class="form-signin">
+        <h2 class="form-signin-heading">Please sign in</h2>
+        <label for="inputEmail" class="sr-only">Email address</label>
+       {{form.email}}
+        <label for="inputPassword" class="sr-only">Password</label>
+        
+        {{form.password}}
+       {{form.submit}}
+</form>
+
+{% endblock %}
