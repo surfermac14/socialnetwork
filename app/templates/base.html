@@ -1,14 +1,39 @@
 {% extends "bootstrap/base.html" %}
 {% block title%} Social Network {% endblock %}
 
+
+
+
 {% block navbar  %}
-<nav class="navbar navbar-default navbar-static-top">
+
+<nav class="navbar navbar-inverse navbar-static-top " role="navigation">
+ 
   <div class="container">
-    {%  block container%}
-	{% endblock %}
+    {%block mynav%}
+  <div class="navbar-header navbar-nav">
+  
+  <a class ="navbar-brand" href="{{url_for("main.index")}}">Social Network</a>
+
+  	  <ul class="nav navbar-nav">
+        <li ><a href="{{url_for('main.registration')}}">Register </a></li>
+        <li ><a href="{{url_for('main.login')}}">Login</a></li>
+      </ul>
+    </div>
+ {%endblock%}
+
   </div>
-</nav
+ 
+</nav>
+
 {% endblock %}
 
 {% block content %}
+{% for message in get_flashed_messages() %}
+		<div class ="alert alert-warning">
+			<button type="button" class="close" data-dismiss="alert">&times;</button>
+			{{ message }}
+		</div>
+{%endfor%}
 {% endblock %}
+
+

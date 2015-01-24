@@ -1,4 +1,4 @@
-from flask import render_template,redirect,flash,url_for,request
+from flask import render_template,redirect,flash,url_for,request,session
 from . import main
 from .forms import RegistrationForm,LoginForm
 from .. import db
@@ -18,16 +18,12 @@ def registration():
 	form = RegistrationForm()
 	user = User()
 	if form.validate_on_submit() :
-		user.fname = form.fname.data
-		user.lname = form.lname.data
-		user.email  = form.email.data
-		user.password = form.password.data
-		user.sex = form.sex.data
-		
-		mail=db.session.query(User).filter_by(email=user.email).first()
-		
-		if mail is None:
-			db.session.add(user)
+
+		possibleuser=db.session.query(User).filter_by(email=form.email.data).first()
+		u = User(fname = form.fname.data,lname=form.lname.data,email=form.email.data,password=form.password.data,sex=form.sex.data)
+		print(u.fname)
+		if possibleuser is None:
+			db.session.add(u)
 			db.session.commit()
 			flash('Successfully registered. Please proceed to login page.')
 			return redirect(url_for('.index'))
@@ -43,14 +39,30 @@ def login():
 	email = request.form['email']
 	password = request.form['password']
 	user = User.query.filter_by(email=email,password=password).first()
-	if user is None:
+	print(user.fname)
+	if user is None :#or not user.verify_password(password):
 		flash("Wrong Email or password")
 		return redirect(url_for('.login'))
-	flash("Welcome %s"%(user.fname))
-	return redirect(url_for('.index')	)
+	session['email'] = user.email
+
+	return redirect(url_for('.profile'))
 
 @main.route('/profile',methods=['GET'])
+@login_required
 def profile():
-	return redirect(url_for('.index'))
+	if 'email' in sesssion :
+		user = User.query.filter_by(email=session['email']).first()
+		return render_template('userprofile.html',user=user)
+	return redirect(url_for('.login'))
 
+
+@main.route('/addfriends',methods=['GET','POST'])
+def addfriends():
+	email = 'mac.abhinav@gmail.com'
+	return render_template('addfriends.html',email=email)
+
+@main.route('/logout',methods='GET')
+def logout():
+	session.pop()
+	return redirect(url_for('.index'))
 

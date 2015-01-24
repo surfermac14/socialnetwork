@@ -1,13 +1,13 @@
-"""Initial migration
+"""initial
 
-Revision ID: 474159c86964
+Revision ID: 5011df774c93
 Revises: None
-Create Date: 2015-01-24 12:06:57.146000
+Create Date: 2015-01-24 16:32:11.510000
 
 """
 
 # revision identifiers, used by Alembic.
-revision = '474159c86964'
+revision = '5011df774c93'
 down_revision = None
 
 from alembic import op
@@ -21,7 +21,7 @@ def upgrade():
     sa.Column('fname', sa.String(length=30), nullable=False),
     sa.Column('lname', sa.String(length=30), nullable=False),
     sa.Column('email', sa.String(length=50), nullable=False),
-    sa.Column('password', sa.String(length=50), nullable=False),
+    sa.Column('password', sa.String(length=50), nullable=True),
     sa.Column('sex', sa.Boolean(), nullable=False),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email')
