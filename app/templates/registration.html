@@ -4,15 +4,10 @@
 {% block title%} Social Network - Registration    {% endblock%}
 
 {% block content%}
-{% for message in get_flashed_messages() %}
-		<div class ="alert alert-warning">
-			<button type="button" class="close" data-dismiss="alert">&times;</button>
-			{{ message }}
-		</div>
-{%endfor%}
-<!--
-<form method="POST" action="/registration.html"--> 
-{{ wtf.quick_form(form) }}
-<!-- </form--> 
+{{super()}}
+<div id = "my_center">
+{{wtf.quick_form(form,form_type="horizontal",horizontal_columns=('sm',3,3))}}
 
+<!-- </form--> 
+</div>
 {% endblock %}

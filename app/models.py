@@ -23,14 +23,14 @@ class User(db.Model):
 	def __repr__(self):
 		return '<User %r' % self.fname'''
 
-'''class FriendRequest(db.Table):
+class FriendRequest(db.Table):
 	__tablename__ = 'friendRequest'
-	
+	id=db.Column(db.Integer,primary_key=True)
 	senderName = db.Column(db.String(50),nullable=False)
 	receiverName = db.Column(db.String(50),nullable=False)
 
 class Friends(db.Table):
 	__tablename__ = 'friends'
+	id=db.Column(db.Integer,primary_key=True)
 	senderName = db.Column(db.String(50),nullable=False)
 	receiverName = db.Column(db.String(50),nullable=False)
-'''	

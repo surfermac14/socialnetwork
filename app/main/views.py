@@ -15,6 +15,9 @@ def user(name):
 
 @main.route('/registration',methods=['GET','POST'])
 def registration():
+	if 'email' in session :
+		user = User.query.filter_by(email=session['email']).first()
+		return render_template('userprofile.html',user=user)
 	form = RegistrationForm()
 	user = User()
 	if form.validate_on_submit() :
@@ -34,12 +37,15 @@ def registration():
 
 @main.route('/login',methods=['GET','POST'])
 def login():
+	if 'email' in session :
+		user = User.query.filter_by(email=session['email']).first()
+		return render_template('userprofile.html',user=user)
+		
 	if request.method == 'GET':
 		return render_template('login.html')
 	email = request.form['email']
 	password = request.form['password']
 	user = User.query.filter_by(email=email,password=password).first()
-	print(user.fname)
 	if user is None :#or not user.verify_password(password):
 		flash("Wrong Email or password")
 		return redirect(url_for('.login'))
@@ -48,9 +54,9 @@ def login():
 	return redirect(url_for('.profile'))
 
 @main.route('/profile',methods=['GET'])
-@login_required
+#@login_required
 def profile():
-	if 'email' in sesssion :
+	if 'email' in session :
 		user = User.query.filter_by(email=session['email']).first()
 		return render_template('userprofile.html',user=user)
 	return redirect(url_for('.login'))
@@ -61,8 +67,8 @@ def addfriends():
 	email = 'mac.abhinav@gmail.com'
 	return render_template('addfriends.html',email=email)
 
-@main.route('/logout',methods='GET')
+@main.route('/logout',methods=['GET'])
 def logout():
-	session.pop()
+	session.pop('email',None)
 	return redirect(url_for('.index'))
 

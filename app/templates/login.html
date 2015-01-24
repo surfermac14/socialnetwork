@@ -2,7 +2,7 @@
 
 {% block content%}
 
-
+{{super()}}
 	<div class="container" id="login-block">
     		<div class="row">
 			    <div class="col-sm-6 col-md-4 col-sm-offset-3 col-md-offset-4">
@@ -17,9 +17,11 @@
 								   Your Error Message goes here
 							</div>
 			        		<form action="" class="form login-form" method=post  >
-						   		 <input type="text" placeholder="User name" name="email" required/> 
-						   		 <input type="password"  placeholder="Password" name="password" required/> 
-						   		 <button type="submit" class="btn btn-red">Login</button> 
+							<table>
+						   		<tr><td> <input type="text" placeholder="Email Address" name="email" required/> </td></tr>
+						   		<tr><td> <input type="password"  placeholder="Password" name="password" required/> </td></tr>
+						   		 <tr><td><button type="submit" class="btn btn-red">Login</button> </td></tr>
+							</table>	 
 							</form>	
 							   		
 			        	</div> 			        	
