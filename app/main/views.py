@@ -36,4 +36,21 @@ def registration():
 			return redirect(url_for('.registration'))
 	return render_template('registration.html',form=form)
 
+@main.route('/login',methods=['GET','POST'])
+def login():
+	if request.method == 'GET':
+		return render_template('login.html')
+	email = request.form['email']
+	password = request.form['password']
+	user = User.query.filter_by(email=email,password=password).first()
+	if user is None:
+		flash("Wrong Email or password")
+		return redirect(url_for('.login'))
+	flash("Welcome %s"%(user.fname))
+	return redirect(url_for('.index')	)
+
+@main.route('/profile',methods=['GET'])
+def profile():
+	return redirect(url_for('.index'))
+
 

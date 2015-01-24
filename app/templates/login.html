@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content%}
+{% for message in get_flashed_messages() %}
+		<div class ="alert alert-warning">
+			<button type="button" class="close" data-dismiss="alert">&times;</button>
+			{{ message }}
+		</div>
+{%endfor%}
+
+	<div class="container" id="login-block">
+    		<div class="row">
+			    <div class="col-sm-6 col-md-4 col-sm-offset-3 col-md-offset-4">
+			    	<h3 class="animated bounceInDown">Login</h3>
+			       <div class="login-box clearfix animated flipInY">
+			        
+			        	
+			        	<div class="login-form">
+			        		<div class="alert alert-error hide">
+								  <button type="button" class="close" data-dismiss="alert">&times;</button>
+								  <h4>Error!</h4>
+								   Your Error Message goes here
+							</div>
+			        		<form action="" class="form login-form" method=post  >
+						   		 <input type="text" placeholder="User name" name="email" required/> 
+						   		 <input type="password"  placeholder="Password" name="password" required/> 
+						   		 <button type="submit" class="btn btn-red">Login</button> 
+							</form>	
+							   		
+			        	</div> 			        	
+			       </div>
+			  	   	
+			       
+			    </div>
+			</div>
+    	</div>
+
+
+
+{% endblock%}
