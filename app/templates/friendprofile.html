@@ -1,0 +1,18 @@
+{%  extends "userprofile.html" %}
+
+
+
+{%block profiledata%}
+		<h1>{{friend.fname}} {{friend.lname}} </h1>
+		{% if status %}
+		<form method="post" action="{{url_for('.addfriend')}}">
+		<input type="button" value="Add Friend"/>
+	</form>
+		{% elif status == "Friends"%}
+		<h4>Friends</h4>
+		{% else %}
+		<h4>Awaiting Response</h4>
+		{%endif%}
+		
+{%endblock%}
+

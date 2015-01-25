@@ -2,16 +2,38 @@ from flask import render_template,redirect,flash,url_for,request,session
 from . import main
 from .forms import RegistrationForm,LoginForm
 from .. import db
-from ..models import User
+from ..models import User,Message,Friends,FriendRequest
 
 
 @main.route('/')
 def index():
-    return render_template('index.html')
+	if 'email' in session :
+		user = User.query.filter_by(email=session['email']).first()
+		return render_template('userprofile.html',user=user)
+	return render_template('index.html')
 
-@main.route('/user/<name>')
-def user(name):
-	return render_template('user.html',name=name)
+@main.route('/user',methods=['POST'])
+def user():
+	friendemail=request.form['friendsemail']
+	useremail = session['email']
+	friend = User.query.filter_by(email=friendemail).first()
+	if friend is None:
+		flash("no such user")
+		return redirect(url_for('.profile'))
+	status=None
+	isafriend = Friends.query.filter_by(senderName=useremail,receiverName=friend.email).first() or Friends.query.filter_by(senderName=friend.email,receiverName=useremail).first() 
+	if isafriend is None:
+		isafriend= FriendRequest.query.filter_by(senderName=friend.email,receiverName=useremail).first()
+	if isafriend is not None:
+		success = Friends(senderName=isafriend.senderName,receiverName=isafriend.receiverName)
+		db.session.add(success)
+		db.session.delete(isafriend)
+		db.session.commit()
+		status="Friends"
+	else:
+		status="Awaiting Response"
+
+	return render_template('friendprofile.html',friend=friend,status=status)
 
 @main.route('/registration',methods=['GET','POST'])
 def registration():
@@ -62,8 +84,8 @@ def profile():
 	return redirect(url_for('.login'))
 
 
-@main.route('/addfriends',methods=['GET','POST'])
-def addfriends():
+@main.route('/addfriend',methods=['POST'])
+def addfriend():
 	email = 'mac.abhinav@gmail.com'
 	return render_template('addfriends.html',email=email)
 
@@ -72,3 +94,17 @@ def logout():
 	session.pop('email',None)
 	return redirect(url_for('.index'))
 
+@main.route('/messages')
+def messages():
+	if 'email' in session :
+		user = User.query.filter_by(email=session['email']).first()
+		sentMessages = Message.query.filter_by(senderName=session['email']).all()
+		receivedMessages = Message.query.filter_by(receiverName=session['email']).all()
+		return render_template('messages.html',sentMessages=sentMessages,receivedMessages=receivedMessages)
+	elif 'email' not in session:
+		flash("You are not logged in")
+		return redirect(url_for(".index"))
+
+
+
+	
