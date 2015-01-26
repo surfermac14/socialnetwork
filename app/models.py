@@ -41,3 +41,11 @@ class Message(db.Model):
 	senderName = db.Column(db.String(50),nullable=False)
 	receiverName = db.Column(db.String(50),nullable=False)
 	message = db.Column(db.String(500),nullable=False)
+
+class Testimonial(db.Model):
+	__tablename__= 'testimonials'
+	id=db.Column(db.Integer,primary_key=True)
+	senderName = db.Column(db.String(50),nullable=False)
+	receiverName = db.Column(db.String(50),nullable=False)
+	testimonial = db.Column(db.String(500),nullable=False)
+

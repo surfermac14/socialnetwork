@@ -5,10 +5,12 @@
 {%block mynav%}
 <li><form class="navbar-form navbar-left" role="search" method=post action="{{url_for(".user")}}">
   <div class="form-group">
-    <input type="text" class="form-control" placeholder="Search" name="friendsemail">
+    <input type="text" class="form-control" placeholder="Find Friends" name="friendsemail">
   </div>
   <button type="submit" class="btn btn-default">Submit</button>
 </form></li>
+
+<li><a href="{{url_for('.viewfriends')}}" >Friends</a></li>
 <li><a class="my_msgimg_link" href="{{url_for('.messages')}}"><img class="my_msgimg"   src="{{url_for('static',filename='msg.png')}}" ></a></li>
 <li ><a href="{{url_for('main.logout')}}">Logout</a></li>
 {%endblock%}
@@ -19,21 +21,28 @@
 {% block content %}
 {{super()}}
 <div class="my_center">
-	<div class="my_sidebar">
-		<img class="img-rounded img-responsive" src="{{url_for('static',filename='fb.png')}}" alt="Profile Pic"/>
-		sdlkfajsldkfj
-		asd<br>
-		asdflkajsd;f
-		asdlfajs;df
-		asdlfk<br>
-
-	</div>	
+	
 
 	<div class="my_profiledata">
 		{%block profiledata%}
-		<h1>Welcome {{user.fname}} {{user.lname}} </h1>
+		<h1>Welcome {{user.fname|capitalize}} {{user.lname|capitalize}} </h1>
+
+		{%if testi%}
+		<h4>Testimonial</h4>
+
+		{%for testimonial in testi%}
+		<table>
+			<tr><td>{{testimonial.senderName}}</td><td>{{testimonial.testimonial}}</td><tr>
+		</table>	
+
+		{%endfor%}
+		{%endif%}
 		{%endblock%}
+
+
 	</div>	
+
+
 
     
 </div>    

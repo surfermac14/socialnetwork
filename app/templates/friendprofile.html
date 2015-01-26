@@ -3,15 +3,29 @@
 
 
 {%block profiledata%}
-		<h1>{{friend.fname}} {{friend.lname}} </h1>
-		{% if status %}
-		<form method="post" action="{{url_for('.addfriend')}}">
-		<input type="button" value="Add Friend"/>
-	</form>
-		{% elif status == "Friends"%}
+		<h1>{{friend.fname|capitalize}} {{friend.lname|capitalize}} </h1>
+		Friendship:{% if status == "Friends"%}
 		<h4>Friends</h4>
-		{% else %}
+		{% elif status =="Awaiting Response"%}
 		<h4>Awaiting Response</h4>
+		{% else %}
+		<form method="post" action="{{url_for('.addfriend')}}">
+			<input type="hidden" value="{{friend.email}}" name="friendemail">
+		<input type="submit"  value="Add Friend"/>
+	</form>
+		
+		
+		{%endif%}
+
+		{%if status=="Friends"%}
+			Write Testimonial:
+			<form method = "POST" action="{{url_for('.writetesti')}}">
+				<input type="hidden" name="friendemail" value="{{friend.email}}">
+				<input type="text" name="testi">
+				<input type="submit" name ="testisubmit"value="Submit">
+			
+			</form>	
+		
 		{%endif%}
 		
 {%endblock%}

@@ -1,0 +1,42 @@
+{% extends "userprofile.html" %}
+
+{% block profiledata %}
+
+	<form id="profilepageform" method="post" action="{{url_for('.user')}}">
+		<input type="hidden" name="friendsemail" >
+	</form>	
+	<div style="float:left;width:45%">
+		<h1>Your friends</h1>
+
+		{% if friends %}
+			<ul class="my_list2">
+			{% for friend in friends %}
+				<li class="friendemail " data-email="{{friend.receiverName}}"><a class="clickme"  href="">{{friend.receiverName}}</a></li>
+
+			{% endfor %}
+		{% endif %}
+		{% if friends2 %}
+			{% for friend in friends2 %}
+				<li class="friendemail " data-email="{{friend.receiverName}}"><a class="clickme" href="">{{friend.senderName}}</a> </li>
+
+			{% endfor %}
+		</u;>
+		{% endif %}
+	
+	</div>
+	<div style="float:right;width:45%">
+		<h1>Your Friendrequests</h1>
+		{% if friendrequests %}
+			<ul class="my_list2">
+			{% for friend in friendrequests %}
+				
+				<li class="requestemail " data-email="{{friend.receiverName}}" ><a class="clickme"  href="" >{{friend.senderName}}</a><a href="#" class="accept">  Accept  </a>
+				<a href="#" class="decline">  Decline  </a></li>
+
+			{% endfor %}
+		</ul>
+		{% endif %}
+
+	</div>	
+
+{% endblock %}

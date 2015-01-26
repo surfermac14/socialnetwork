@@ -14,16 +14,7 @@
 		float: right;
 		font-size: 16px;
 	}
-	.my_sidebar{
-		height:100%;
-		background-color: red;
-		margin-left:10px;
-		margin-top:10px;
-		float:left;
-		width: 20%;
-		display: block;
-
-	}
+	
 	.my_profiledata{
 		height:100%;
 		background-color: yellow;
@@ -31,7 +22,8 @@
 		margin-right:10px;
 		margin-top:10px;
 		float:right;
-		width: 70%;
+		width: 100%;
+		padding:10px;
 
 	}
 	.my_msgimg{
@@ -42,10 +34,68 @@
 	.my_msgimg_link{
 		padding-bottom: 0px;
 	}
+	.my_dshow{
+		display:none;
+	}
+	.my_show{
+		display:block;
+	}
+	.my_list{
+		 
+		
+	}
+	.my_list li{
+		
+		list-style-type: none;
+		display: inline; 
+	}
+	.my_list2 li{
+		list-style-type: none;
+	}
 
 </style>
 {%endblock%}
+{%block scripts%}
+{{super()}}
 
+<script type="text/javascript">
+$("document").ready(function(){
+	var submitform = function(e){
+		$.getJSON($SCRIPT_ROOT+'{{url_for(".writetesti")}}',{testi:$('input[name="testi"]')}); }
+	$('input[name="testisubmit"]').on('click',submitform);
+
+
+	// Message page switch between new,sent and received
+	$('.my_list li a').on("click",function(){
+	var p = $(this).closest("li").data("btn");
+	var q=$('div').find(p);
+	console.log(q);
+	$(".my_show").removeClass("my_show");
+	q.addClass("my_show");
+	});
+
+	//Going to friends profile page by clicking link
+	$(".clickme").on("click",function(){
+		console.log("clicked");
+		var friendsemail=$(this).closest("li").data("email");
+		$('#profilepageform').find("input").val(friendsemail);
+		$('#profilepageform').submit();
+
+
+	});
+
+
+
+
+
+});
+
+
+
+
+
+</script>
+{%endblock%}
 
 
 {% block navbar  %}
@@ -74,12 +124,14 @@
 {% endblock %}
 
 {% block content %}
+{%block messages%}
 {% for message in get_flashed_messages() %}
 		<div class ="alert alert-warning">
 			<button type="button" class="close" data-dismiss="alert">&times;</button>
 			{{ message }}
 		</div>
 {%endfor%}
+{%endblock%}
 {% endblock %}
 
 

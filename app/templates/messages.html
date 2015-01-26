@@ -5,9 +5,29 @@
 
 		{%block profiledata%}
 		<h1>Messages </h1><br>
-		<p>
-			{%if sentMessages%}
+
+		<ul class="my_list">
+			<li data-btn =".newmessage"><a href="#"><img name="msgnew" style="width:50px;height:30px" src="{{url_for('static',filename='newmsg.png')}}"></a></li>
+			<li data-btn =".sentMessages"><a href="#">Sent</a></li>
+			<li data-btn =".receivedMessages"> <a href="#">Received</a></li>
+		</ul>
+
+		<div class="newmessage my_dshow">
+		<p >
+			<form  method="post" action="{{url_for('.sendmsg')}}">
 			<table>
+				<tr><td>To:<input type="text" name="to"></td></tr>
+				<tr><td>Message:<input type="text" name="msg" ></td></tr>
+				<tr><td><input type="submit"></td></tr>
+			</table>
+			</form>
+
+		</p>	
+		</div>
+		<div class="sentMessages my_dshow">
+		<p >
+			{%if sentMessages%}
+			<table >
 				<tr><th>Sent To</th><th>Message</th></tr>
 			{%for message in sentMessages%}
 				
@@ -17,9 +37,11 @@
 			</table>
 			{%endif%}
 		</p>
-		<p>
+		</div>
+		<div class="receivedMessages my_dshow">
+		<p >
 			{%if receivedMessages%}
-			<table>
+			<table >
 				<tr><th>Received from</th><th>Message</th></tr>
 			{%for message in receivedMessages%}
 				<tr><td>{{message.senderName}}</td><td>{{message.message}}</td></tr>
@@ -27,5 +49,6 @@
 			</table>
 			{%endif%}
 		</p>	
+		</div>
 		{%endblock%}
 
