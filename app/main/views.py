@@ -64,9 +64,18 @@ def login():
 #@login_required
 def profile():
 	if 'email' in session :
+		email=session['email']
 		user = User.query.filter_by(email=session['email']).first()
 		testi= readtesti()
-		return render_template('userprofile.html',user=user,testi=readtesti())
+		data = []
+		nofriends = Friends.query.filter_by(senderName=email).count()+ Friends.query.filter_by(receiverName=email).count()
+		data.append(["Friends",nofriends])
+		nosent = Message.query.filter_by(senderName=email).count()
+		data.append(["Sent Messages",nosent])
+		noreceived = Message.query.filter_by(receiverName=email).count()
+		data.append(["Received Messages",noreceived])
+
+		return render_template('userprofile.html',user=user,testi=readtesti(),data=data)
 	return redirect(url_for('.login'))
 
 
@@ -95,6 +104,8 @@ def messages():
 	elif 'email' not in session:
 		flash("You are not logged in")
 		return redirect(url_for(".index"))
+
+
 
 
 
@@ -145,7 +156,46 @@ def viewfriends():
 	friendrequests = FriendRequest.query.filter_by(receiverName=email).all()
 	return render_template("/friends.html",friends=friends,friends2=friends2,friendrequests=friendrequests)
 
+@main.route("/acceptfriendrequest/<femail>",methods=['GET','POST'])
+def acceptfriendrequest(femail):
+	email = session['email']
+	query = FriendRequest.query.filter_by(senderName=femail,receiverName=email).first()
+	db.session.delete(query)
+	newfriend = Friends(senderName=femail,receiverName=email)
+	db.session.add(newfriend)
+	db.session.commit()
+	flash("Accepted friend request from %s"%(femail))
+	return redirect(url_for(".profile"))
+	
 
+@main.route("/declinefriendrequest/<femail>",methods=['GET','POST'])
+def declinefriendrequest(femail):
+	email = session['email']
+	query = FriendRequest.query.filter_by(senderName=femail,receiverName=email).first()
+	db.session.delete(query)
+	flash("Declined request from %s"%(femail))
+	return redirect(url_for(".profile"))
+	
+
+@main.route("/users/<profile>",methods=['GET','POST'])
+def users(profile):
+	friendemail=profile
+	useremail = session['email']
+	friend = User.query.filter_by(email=friendemail).first()
+	status=isFriend(useremail,friendemail)
+	return render_template('friendprofile.html',friend=friend,status=status)
+
+@main.route("/deletefriend/<femail>")
+def deletefriend(femail):
+	friendemail=femail
+	email= session['email']
+	query = Friends.query.filter_by(senderName=email,receiverName=femail).first()
+	if query is None:
+		query = Friends.query.filter_by(senderName=femail,receiverName=email).first()
+	db.session.delete(query)
+	db.session.commit()
+	flash("You have deleted %s"%(femail))
+	return redirect(url_for('.viewfriends'))
 
 
 def readtesti():

@@ -1,5 +1,7 @@
 {% extends "userprofile.html" %}
 
+
+
 {% block profiledata %}
 
 	<form id="profilepageform" method="post" action="{{url_for('.user')}}">
@@ -11,13 +13,13 @@
 		{% if friends %}
 			<ul class="my_list2">
 			{% for friend in friends %}
-				<li class="friendemail " data-email="{{friend.receiverName}}"><a class="clickme"  href="">{{friend.receiverName}}</a></li>
+				<li class="friendemail " data-email="{{friend.receiverName}}"><a class="clickme"  href="{{url_for('.users',profile=friend.receiverName)}}">{{friend.receiverName}}</a> <a href="{{url_for('.deletefriend',femail=friend.receiverName)}}"> Delete </a></li>
 
 			{% endfor %}
 		{% endif %}
 		{% if friends2 %}
 			{% for friend in friends2 %}
-				<li class="friendemail " data-email="{{friend.receiverName}}"><a class="clickme" href="">{{friend.senderName}}</a> </li>
+				<li class="friendemail " ><a class="clickme" href="{{url_for('.users',profile=friend.senderName)}}">{{friend.senderName}}</a> <a href="{{url_for('.deletefriend',femail=friend.senderName)}}"> Delete </a> </li>
 
 			{% endfor %}
 		</u;>
@@ -30,13 +32,17 @@
 			<ul class="my_list2">
 			{% for friend in friendrequests %}
 				
-				<li class="requestemail " data-email="{{friend.receiverName}}" ><a class="clickme"  href="" >{{friend.senderName}}</a><a href="#" class="accept">  Accept  </a>
-				<a href="#" class="decline">  Decline  </a></li>
+				<li class="requestemail " ><a class="clickme"  href="{{url_for('.users',profile=friend.senderName)}}" >{{friend.senderName}}</a><a href="{{url_for('.acceptfriendrequest',femail=friend.senderName)}}" class="accept">  Accept  </a>
+				<a href="{{url_for('.declinefriendrequest',femail=friend.senderName)}}" class="decline">  Decline  </a></li>
 
 			{% endfor %}
 		</ul>
 		{% endif %}
 
 	</div>	
+
+
+
+	
 
 {% endblock %}

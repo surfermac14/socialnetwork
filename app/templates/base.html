@@ -1,7 +1,8 @@
 {% extends "bootstrap/base.html" %}
 {% block title%} Social Network {% endblock %}
 {% block styles%}
-{{super()}}
+
+<link href="{{url_for('static',filename='css/bootstrap.min.css')}}" rel="stylesheet" media="screen">
 <style rel="stylesheet">
 	.my_center{
 		margin-left: auto;
@@ -17,7 +18,7 @@
 	
 	.my_profiledata{
 		height:100%;
-		background-color: yellow;
+		
 		margin-left:10px;
 		margin-right:10px;
 		margin-top:10px;
@@ -56,12 +57,17 @@
 </style>
 {%endblock%}
 {%block scripts%}
-{{super()}}
+
+<script src="{{url_for('static',filename='js/jquery.min.js')}}"></script>
+ <script src="{{url_for('static',filename='js/bootstrap.min.js')}}"></script>
+
+
+
 
 <script type="text/javascript">
 $("document").ready(function(){
 	var submitform = function(e){
-		$.getJSON($SCRIPT_ROOT+'{{url_for(".writetesti")}}',{testi:$('input[name="testi"]')}); }
+		$.getJSON($SCRIPT_ROOT+'{{url_for(".writetesti")}}',{testi:$('input[name="testi"]').val()}); }
 	$('input[name="testisubmit"]').on('click',submitform);
 
 
@@ -74,15 +80,13 @@ $("document").ready(function(){
 	q.addClass("my_show");
 	});
 
-	//Going to friends profile page by clicking link
-	$(".clickme").on("click",function(){
-		console.log("clicked");
-		var friendsemail=$(this).closest("li").data("email");
-		$('#profilepageform').find("input").val(friendsemail);
-		$('#profilepageform').submit();
+	
+  
+
+	   
 
 
-	});
+
 
 
 
