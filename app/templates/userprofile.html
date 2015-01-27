@@ -2,7 +2,7 @@
 
 {% block scripts%}
 {{super()}}
-<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script type="text/javascript" src="{{url_for('static',filename='js/jsapi')}}"></script>
     <script type="text/javascript">
 
       // Load the Visualization API and the piechart package.
@@ -17,15 +17,13 @@
       function drawChart() {
 
         // Create the data table.
-        var data = new google.visualization.DataTable();
-        data.addColumn('string', 'Name');
-        data.addColumn('number', 'Number');
-        data.addRows(
-        	{% for list in data%}
-        		{{list[0]}}{{list[1]}}
-        	{% endfor %}
-
-        	);
+        {% if jscode %}
+        {%autoescape false%}
+        {{  jscode }}
+        {%endautoescape%}
+      
+        {%endif%}
+        
 
         // Set chart options
         var options = {'title':'User statistics',
@@ -34,7 +32,7 @@
 
         // Instantiate and draw our chart, passing in some options.
         var chart = new google.visualization.BarChart(document.getElementById('chart_div'));
-        chart.draw(data, options);
+        chart.draw(jscode_data, options);
       }
     </script>
 
@@ -43,6 +41,7 @@
 
 
 {%block mynav%}
+
 <li><form class="navbar-form navbar-left" role="search" method=post action="{{url_for(".user")}}">
   <div class="form-group">
     <input type="text" class="form-control" placeholder="Find Friends" name="friendsemail">
@@ -81,7 +80,7 @@
 		<div id="chart_div"></div>
 		{%endblock%}
 
-
+    
 	</div>	
 
 

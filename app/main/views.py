@@ -3,13 +3,15 @@ from . import main
 from .forms import RegistrationForm,LoginForm
 from .. import db
 from ..models import User,Message,Friends,FriendRequest,Testimonial
+import gviz_api
 
 
 @main.route('/')
 def index():
 	if 'email' in session :
+		email=session['email']
 		user = User.query.filter_by(email=session['email']).first()
-		return render_template('userprofile.html',user=user,testi=readtesti())
+		return render_template('userprofile.html',user=user,testi=readtesti(),jscode=getJScode(email))
 	return render_template('index.html')
 
 @main.route('/user',methods=['GET','POST'])
@@ -65,17 +67,7 @@ def login():
 def profile():
 	if 'email' in session :
 		email=session['email']
-		user = User.query.filter_by(email=session['email']).first()
-		testi= readtesti()
-		data = []
-		nofriends = Friends.query.filter_by(senderName=email).count()+ Friends.query.filter_by(receiverName=email).count()
-		data.append(["Friends",nofriends])
-		nosent = Message.query.filter_by(senderName=email).count()
-		data.append(["Sent Messages",nosent])
-		noreceived = Message.query.filter_by(receiverName=email).count()
-		data.append(["Received Messages",noreceived])
-
-		return render_template('userprofile.html',user=user,testi=readtesti(),data=data)
+		return render_template('userprofile.html',user=user,testi=readtesti(),jscode=getJScode(email))
 	return redirect(url_for('.login'))
 
 
@@ -197,6 +189,11 @@ def deletefriend(femail):
 	flash("You have deleted %s"%(femail))
 	return redirect(url_for('.viewfriends'))
 
+def jsonChartData():
+	description = {"name": ("string", "Name"),
+                 "number": ("number", "Number"),
+                }
+
 
 def readtesti():
 	email = session['email']
@@ -217,5 +214,23 @@ def isFriend(useremail,friendemail):
 	else:
 		status="Friends"
 	return status
+
+def getJScode(email):
+	user = User.query.filter_by(email=session['email']).first()
+	testi= readtesti()
+	description = {"name": ("string", "Name"),"number": ("number", "Number")}
+	my_data=[]
+	nofriends = Friends.query.filter_by(senderName=email).count() + Friends.query.filter_by(receiverName=email).count()
+	my_data.append({"name":"Friends","number":nofriends})
+	nosent = Message.query.filter_by(senderName=email).count()
+	my_data.append({"name":"Sent Messages","number":nosent})
+	noreceived = Message.query.filter_by(receiverName=email).count()
+	my_data.append({"name":"Received Messages","number":noreceived})
+
+	data_table = gviz_api.DataTable(description)
+	data_table.LoadData(my_data)
+
+	jscode = data_table.ToJSCode("jscode_data",columns_order=("name", "number"),order_by="name")
+	return jscode
 
 	
