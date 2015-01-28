@@ -17,8 +17,16 @@
 		
 		{%endif%}
 
+		<b> Address:</b> {{friend.address}} <br>
+      <b>PhoneNumber:</b> {{friend.phoneno}}<br>
+      <b>Sex:</b>{%if friend.sex == 0%}
+    Male
+    {%else%}
+    Female
+    {%endif%}<br><br>
+
 		{%if status=="Friends"%}
-			Write Testimonial:
+			<br>Write Testimonial:</b>
 			<form method = "POST" action="{{url_for('.writetesti')}}">
 				<input type="hidden" name="friendemail" value="{{friend.email}}">
 				<input type="text" name="testi">

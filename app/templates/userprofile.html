@@ -51,7 +51,19 @@
 
 <li><a href="{{url_for('.viewfriends')}}" >Friends</a></li>
 <li><a class="my_msgimg_link" href="{{url_for('.messages')}}"><img class="my_msgimg"   src="{{url_for('static',filename='msg.png')}}" ></a></li>
-<li ><a href="{{url_for('main.logout')}}">Logout</a></li>
+<li class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"> {{user.fname}} <span class="caret"></span></a> 
+   <ul class="dropdown-menu" role="menu">
+            <li><a href ="{{url_for('.profile')}}">Profile</a></li>
+            <li><a href="{{url_for('.editprofile')}}">Edit Profile</a></li>
+            <li><a href="{{url_for('main.logout')}}">Logout</a></li>
+            
+          
+          </ul>
+
+
+
+</li>
+
 {%endblock%}
 
 
@@ -65,6 +77,13 @@
 	<div class="my_profiledata">
 		{%block profiledata%}
 		<h1>Welcome {{user.fname|capitalize}} {{user.lname|capitalize}} </h1>
+     <b> Address:</b> {{user.address}} <br>
+      <b>PhoneNumber:</b> {{user.phoneno}}<br>
+      <b>Sex:</b>{%if user.sex == 0%}
+    Male
+    {%else%}
+    Female
+    {%endif%}<br>
 
 		{%if testi%}
 		<h4>Testimonial</h4>

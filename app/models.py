@@ -11,6 +11,8 @@ class User(db.Model):
 	password=db.Column(db.String(50))
 	#passwordhash = db.Column(db.String(128))
 	sex = db.Column(db.Boolean(),nullable=False)
+	address = db.Column(db.String(100))
+	phoneno = db.Column(db.String(15))
 
 	'''@property
 	def password(self):
