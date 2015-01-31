@@ -4,6 +4,7 @@ from .forms import RegistrationForm,LoginForm
 from .. import db
 from ..models import User,Message,Friends,FriendRequest,Testimonial
 import gviz_api
+import json
 
 
 @main.route('/')

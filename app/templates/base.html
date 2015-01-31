@@ -67,6 +67,7 @@
 <script type="text/javascript">
 $("document").ready(function(){
 	var submitform = function(e){
+		console.log($SCRIPT_ROOT)
 		$.getJSON($SCRIPT_ROOT+'{{url_for(".writetesti")}}',{testi:$('input[name="testi"]').val()}); }
 	$('input[name="testisubmit"]').on('click',submitform);
 
