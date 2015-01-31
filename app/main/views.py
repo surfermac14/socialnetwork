@@ -1,6 +1,6 @@
 from flask import render_template,redirect,flash,url_for,request,session
 from . import main
-from .forms import RegistrationForm,LoginForm
+from .forms import RegistrationForm,LoginForm,EditProfileForm	
 from .. import db
 from ..models import User,Message,Friends,FriendRequest,Testimonial
 import gviz_api
@@ -19,9 +19,10 @@ def index():
 def user():
 	friendemail=request.form['friendsemail'] 
 	useremail = session['email']
+	user = User.query.filter_by(email=session['email']).first()
 	friend = User.query.filter_by(email=friendemail).first()
 	status=isFriend(useremail,friendemail)
-	return render_template('friendprofile.html',friend=friend,status=status)
+	return render_template('friendprofile.html',friend=friend,status=status,user=user)
 
 @main.route('/registration',methods=['GET','POST'])
 def registration():
@@ -33,7 +34,7 @@ def registration():
 	if form.validate_on_submit() :
 
 		possibleuser=db.session.query(User).filter_by(email=form.email.data).first()
-		u = User(fname = form.fname.data,lname=form.lname.data,email=form.email.data,password=form.password.data,sex=form.sex.data)
+		u = User(fname = form.fname.data,lname=form.lname.data,email=form.email.data,password=form.password.data,sex=form.sex.data,address=form.address.data,phoneno=form.phoneno.data)
 		print(u.fname)
 		if possibleuser is None:
 			db.session.add(u)
@@ -48,8 +49,10 @@ def registration():
 @main.route('/login',methods=['GET','POST'])
 def login():
 	if 'email' in session :
-		user = User.query.filter_by(email=session['email']).first()
-		return render_template('userprofile.html',user=user,testi=readtesti())
+		email = session['email']
+		user = User.query.filter_by(email=email).first()
+		
+		return render_template('userprofile.html',user=user,testi=readtesti(),jscode=getJScode(email))
 		
 	if request.method == 'GET':
 		return render_template('login.html')
@@ -61,13 +64,14 @@ def login():
 		return redirect(url_for('.login'))
 	session['email'] = user.email
 
-	return redirect(url_for('.profile'))
+	return render_template('userprofile.html',user=user,testi=readtesti(),jscode=getJScode(email))
 
 @main.route('/profile',methods=['GET'])
 #@login_required
 def profile():
 	if 'email' in session :
 		email=session['email']
+		user = User.query.filter_by(email=session['email']).first()
 		return render_template('userprofile.html',user=user,testi=readtesti(),jscode=getJScode(email))
 	return redirect(url_for('.login'))
 
@@ -91,26 +95,52 @@ def logout():
 def messages():
 	if 'email' in session :
 		user = User.query.filter_by(email=session['email']).first()
-		sentMessages = Message.query.filter_by(senderName=session['email']).all()
-		receivedMessages = Message.query.filter_by(receiverName=session['email']).all()
-		return render_template('messages.html',sentMessages=sentMessages,receivedMessages=receivedMessages)
+		return render_template('messages.html',user=user)
 	elif 'email' not in session:
 		flash("You are not logged in")
 		return redirect(url_for(".index"))
 
+@main.route('/getSent',methods=['GET'])
+def getSent():
+	if 'email' in session:
+		user = User.query.filter_by(email=session['email']).first()
+		sentMessages = Message.query.filter_by(senderName=session['email']).all()
+		lst = []
+		for message in sentMessages:
+			d={}
+			d['message'] = message.message
+			d['name'] = message.receiverName
+			lst.append(d)
+		
+		return json.dumps(lst)
 
+@main.route('/getReceived',methods=['GET'])
+def getReceived():
+	if 'email' in session:
+		user = User.query.filter_by(email=session['email']).first()
+		sentMessages = Message.query.filter_by(receiverName=session['email']).all()
+		lst = []
+		for message in sentMessages:
+			d={}
+			d['message'] = message.message
+			d['name'] = message.senderName
+			lst.append(d)
+		
+		return json.dumps(lst)
 
 
 
 
 @main.route("/sendmsg",methods=['post'])
 def sendmsg():
-	to = request.form['to']
+
+	to = request.form['name']
+	print(to)
 	friend = User.query.filter_by(email=to).first()
 	if friend is None:
 		flash("No such user")
 		return redirect(url_for(".messages"))
-	msg= request.form['msg']
+	msg= request.form['message']
 	email = session['email']
 	if isFriend(email,to) is not "Friends":
 		flash("You are not friends. Cant send message")
@@ -118,7 +148,15 @@ def sendmsg():
 	newmsg = Message(senderName=email,receiverName=to,message=msg)
 	db.session.add(newmsg)
 	db.session.commit();
-	return redirect(url_for('.messages'))
+	msgs = Message.query.filter_by(senderName=email,receiverName=to).all()
+	msg = msgs[-1]
+	message ={
+		"id":msg.id,
+		"senderName":msg.senderName,
+		"receiverName":msg.receiverName,
+		"message":msg.message
+	}
+	return json.dumps(message)
 
 @main.route("/writetesti",methods=['POST'])
 def writetesti():
@@ -142,12 +180,13 @@ def viewfriends():
 		flash("You are not logged in")
 		return redirect(url_for(".index"))
 	email= session['email']
+	user = User.query.filter_by(email=session['email']).first()
 	friends=Friends.query.filter_by(senderName=email ).all()
 	friends2=Friends.query.filter_by(receiverName=email).all()
 	print(friends)
 	print(friends2)
 	friendrequests = FriendRequest.query.filter_by(receiverName=email).all()
-	return render_template("/friends.html",friends=friends,friends2=friends2,friendrequests=friendrequests)
+	return render_template("/friends.html",friends=friends,friends2=friends2,friendrequests=friendrequests,user=user)
 
 @main.route("/acceptfriendrequest/<femail>",methods=['GET','POST'])
 def acceptfriendrequest(femail):
@@ -176,7 +215,7 @@ def users(profile):
 	useremail = session['email']
 	friend = User.query.filter_by(email=friendemail).first()
 	status=isFriend(useremail,friendemail)
-	return render_template('friendprofile.html',friend=friend,status=status)
+	return render_template('friendprofile.html',friend=friend,status=status,user=user)
 
 @main.route("/deletefriend/<femail>")
 def deletefriend(femail):
@@ -189,6 +228,38 @@ def deletefriend(femail):
 	db.session.commit()
 	flash("You have deleted %s"%(femail))
 	return redirect(url_for('.viewfriends'))
+
+@main.route('/editprofile',methods=['GET','POST'])
+def editprofile():
+	if 'email' in session :
+		email=session['email']
+		user = User.query.filter_by(email=email).first()
+		id = user.id
+		form = EditProfileForm(fname=user.fname,lname=user.lname,password=user.password,email=user.email,address=user.address,phoneno=user.phoneno)
+		
+		if request.method == 'POST':
+			if form.validate_on_submit():
+				user.fname = request.form['fname']
+				user.lname = request.form['lname']
+				user.password = request.form['password']
+				user.email = request.form['email']
+				user.address = request.form['address']
+				user.phoneno = request.form['phoneno']
+				db.session.commit()
+				flash("Profile Edited")
+				return redirect(url_for('.profile'))
+		return render_template("editprofile.html",form=form,user=user)
+		
+	return redirect(url_for('.profile'))
+	
+
+
+
+@main.route('/edit',methods=['POST'])
+def edit():
+	email = session['email']
+	user = User.query.filter_by(email=email).first()
+
 
 def jsonChartData():
 	description = {"name": ("string", "Name"),

@@ -14,40 +14,33 @@
 
 		<div class="newmessage my_dshow">
 		<p >
-			<form  method="post" action="{{url_for('.sendmsg')}}">
+			
 			<table>
-				<tr><td>To:<input type="text" name="to"></td></tr>
-				<tr><td>Message:<input type="text" name="msg" ></td></tr>
-				<tr><td><input type="submit"></td></tr>
+				<tr><td>To:<input type="text" id="to"></td></tr>
+				<tr><td>Message:<input type="text" id="msg" ></td></tr>
+				<tr><td><input id="submitmsg" type="submit"></td></tr>
 			</table>
-			</form>
+			
 
 		</p>	
 		</div>
 		<div class="sentMessages my_dshow">
 		<p >
-			{%if sentMessages%}
-			<table >
+			<table id="sent">
 				<tr><th>Sent To</th><th>Message</th></tr>
-			{%for message in sentMessages%}
-				
-					<tr><td>{{message.receiverName}}</td><td>{{message.message}}</td></tr>
-					
-			{%endfor%}
+			
 			</table>
-			{%endif%}
+			
+			
+			
 		</p>
 		</div>
 		<div class="receivedMessages my_dshow">
 		<p >
-			{%if receivedMessages%}
-			<table >
-				<tr><th>Received from</th><th>Message</th></tr>
-			{%for message in receivedMessages%}
-				<tr><td>{{message.senderName}}</td><td>{{message.message}}</td></tr>
-			{%endfor%}
+			<table id="received">
+				<tr><th>Received From</th><th>Message</th></tr>
+			
 			</table>
-			{%endif%}
 		</p>	
 		</div>
 		{%endblock%}
