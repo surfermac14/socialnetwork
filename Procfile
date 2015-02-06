@@ -1,1 +1,1 @@
-web: guinicorn manage.py:app --log-file=-
+web: waitress-serve --port=$PORT {socialnetwork}.manage:application
